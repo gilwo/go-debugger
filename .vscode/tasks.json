@@ -1,0 +1,27 @@
+{
+    "version": "2.0.0",
+
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "buildApp",
+            "detail": "shell: build app locally",
+            "command": "make",
+            "args": [
+                "build-app"
+            ],
+            "problemMatcher": [
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
+            "label": "runApp",
+            "type": "shell",
+            "command": "./go-debugger",
+            "dependsOn": "buildApp",
+          }
+    ]
+}

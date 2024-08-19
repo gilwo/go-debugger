@@ -1,0 +1,29 @@
+{
+    "version": "0.2.0",
+    "configurations": [{
+        "name": "remote debug attach",
+        "type": "go",
+        "request": "attach",
+        "mode": "remote",
+        "port": 4123,
+        "host": "127.0.0.1",
+        "showLog": true,
+        "trace": "log",
+        "logOutput": "rpc"
+    },{
+        "name": "local debug run",
+        "type": "go",
+        "request": "launch",
+        "mode": "auto",
+        "program": "${workspaceFolder}/main.go",
+
+    },{
+        "name": "local debug attach",
+        "type": "go",
+        "request": "attach",
+        "mode": "local",
+        "processId": "go-debugger",
+        // preLaunchTask is not working for attach :/ .. untill it is fixed (https://github.com/microsoft/vscode-cpptools/issues/9773) - build manually using make build-app
+        // "preLaunchTask": "runApp",
+    }]
+}

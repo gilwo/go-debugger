@@ -1,0 +1,36 @@
+FROM --platform=${TARGETPLATFORM} alpine:3.20.2 AS base
+
+FROM golang:1.21-alpine AS builder
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM" > /log
+
+FROM builder AS build-debug
+WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+RUN --mount=type=cache,target=/root/.cache/go-build \
+  GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
+  CGO_ENABLED=0 go install -ldflags "-s -w -extldflags '-static'" github.com/go-delve/delve/cmd/dlv@latest
+
+COPY . .
+
+ARG WEB_PORT
+RUN --mount=type=cache,target=/root/.cache/go-build \
+  GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
+  CGO_ENABLED=0 go build \
+  -gcflags="all=-N -l" \
+  -ldflags=" \
+  -X 'main.WebPort=${WEB_PORT}' \
+  " \
+  -o go-debugger main.go
+
+FROM base AS pack-debug
+RUN apk add file
+COPY --from=build-debug /go/bin/dlv /go/bin/dlv
+COPY --from=build-debug /app/go-debugger /
+ARG WEB_PORT
+ARG DEBUG_PORT
+EXPOSE ${WEB_PORT} ${DEBUG_PORT}
+ENV DEBUG_PORT=${DEBUG_PORT}
+CMD /go/bin/dlv --listen=:${DEBUG_PORT} --headless=true --log=true --accept-multiclient --api-version=2 exec /go-debugger --continue 
