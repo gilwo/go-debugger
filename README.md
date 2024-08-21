@@ -4,14 +4,14 @@ this is simple example on debugging a go program locally and remotley.
 it is based on [github.com/kenaqshal/go-debugger]() great tutorial.
 
 ## locally
-debug directly the program within the vscode (build and run within is done internally)
+debug the program directly within vscode (build and run within is done internally)
 - run vscode `local debug run`
 - put breakpoint in `/test` endpoint
 - run `make run-debug-break`
 
 ## locally attach to process
-debug directly the program within the vscode (build and run within is done internally)
-- first build using `make run-app`
+standalone build and run the program, then attach the debugger to the running program process
+- first build and run using `make run-app`
 - run vscode `local debug attach`
 - put breakpoint in `/test` endpoint
 - run `make run-debug-break`
@@ -19,7 +19,7 @@ debug directly the program within the vscode (build and run within is done inter
 NOTE: pay attention to the `preLaunchTask` on the launch.json
 
 ## remote locally containerizied
-debug build and run the the app in a dockerized environment
+build and run the the program in a dockerized environment, attach debugger remotely
 - first run `make run-debug-check PLATFORM=linux/$(go env GOARCH)`
 - run vscode `remote debug attach`
 - put breakpoint in `/test` endpoint
@@ -27,7 +27,7 @@ debug build and run the the app in a dockerized environment
 - run `make stop-debug` to drop the container
 
 ## remote in kubernatees cluster
-debug build, push to docker registry, run conatiner in kubernatees cluster
+debug build, push to docker registry, run conatiner in kubernatees cluster, then attach the debugger remotely
 - set `CONTAINER_REGISTRY` and `REPOSITORY` as env var or directly in `Makefile`
 - optinally set `IMAGE_TAG`
 - run in cluster
